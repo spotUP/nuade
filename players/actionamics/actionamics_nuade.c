@@ -115,9 +115,9 @@ static NuadeTrackerInfoResult actionamics_tracker_info(void* user_data, const Nu
                                                 .rows = rows,
                                                 .column_count = 4,
                                                 .columns = { { "note", NuadeColumn_Note, 3, ACTIONAMICS_NOTE_SHIFT },
-                                                             { "ins", NuadeColumn_Hex, 2 },
-                                                             { "fx", NuadeColumn_Hex, 2 },
-                                                             { "arg", NuadeColumn_Hex, 2 } } } };
+                                                             { "ins", NuadeColumn_Hex, 2, 0 },
+                                                             { "fx", NuadeColumn_Hex, 2, 0 },
+                                                             { "arg", NuadeColumn_Hex, 2, 0 } } } };
 }
 
 static NuadePatternCell actionamics_cell(const void* ctx, uint32_t order, uint32_t channel, uint32_t row) {
