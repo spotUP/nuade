@@ -175,6 +175,7 @@ struct SmModule {
     SmModuleType module_type;
     char module_name[27];
     uint8_t wave_num;
+    bool v10_mark; // the file carries the SoundMon 1.0 mark "BPSM" (no waveform tables)
     uint16_t step_num;
     uint16_t track_num;
 

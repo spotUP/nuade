@@ -184,11 +184,12 @@ static bool load_module(SmModule* m, SmReader* r, SmModuleType type) {
     // Read module name (26 bytes)
     read_string(r, m->module_name, 26);
 
-    // Skip the mark (3 bytes) - already consumed by identify
+    // The mark is "V.2"/"V.3" plus the waveform count, or the four bytes "BPSM" (SoundMon 1.0, no waveform tables)
+    m->v10_mark = r->size >= 30 && r->data[26] == 'B';
     reader_skip(r, 3);
-
-    // Get number of waveforms
     m->wave_num = read_u8(r);
+    if (m->v10_mark)
+        m->wave_num = 0;
 
     // Get number of positions (steps)
     m->step_num = read_b_u16(r);
@@ -1263,6 +1264,9 @@ static SmModuleType sniff_type(const uint8_t* data, size_t size) {
         return SM_TYPE_UNKNOWN;
     if (data[26] == 'V' && data[27] == '.' && data[28] == '2')
         return SM_TYPE_SOUNDMON_11;
+    // SoundMon 1.0: the same layout without waveform tables, played by the 1.1 routine
+    if (data[26] == 'B' && data[27] == 'P' && data[28] == 'S' && data[29] == 'M')
+        return SM_TYPE_SOUNDMON_11;
     if (data[26] == 'V' && data[27] == '.' && data[28] == '3')
         return SM_TYPE_SOUNDMON_22;
     return SM_TYPE_UNKNOWN;
@@ -1361,6 +1365,8 @@ const char* sm_title(const SmModule* module) {
 }
 
 const char* sm_format_name(const SmModule* module) {
+    if (module && module->v10_mark)
+        return "BP SoundMon 1.0";
     return module && module->module_type == SM_TYPE_SOUNDMON_22 ? "BP SoundMon 2.2" : "BP SoundMon 1.1";
 }
 
