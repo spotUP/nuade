@@ -403,7 +403,9 @@ static bool qc_validate_module(QcModule* m) {
     return true;
 }
 
-static bool qc_load_module(QcModule* m, const uint8_t* data, size_t size) {
+/* I1323: m68k-amigaos-gcc 6.5 at -O2 miscompiles qc_create when this is inlined (the success path returns
+ * the reader data pointer, i.e. the file buffer, instead of the module). Keep it out of line. */
+__attribute__((noinline)) static bool qc_load_module(QcModule* m, const uint8_t* data, size_t size) {
     QcReader reader;
     qc_reader_init(&reader, data, size);
 
